@@ -6,10 +6,9 @@ from torch.utils.data import DataLoader
 from torchvision.utils import save_image
 from tqdm import tqdm
 
-# Import the models
 from WGANmodel import Discriminator, Generator, initialize_weights
 
-# Set up hyperparameters
+# hyperparameters
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 LEARNING_RATE = 1e-4
 BATCH_SIZE = 64
@@ -22,7 +21,7 @@ FEATURES_GEN = 64
 CRITIC_ITERATIONS = 5
 LAMBDA_GP = 10
 
-# Define transformations
+# transformations
 transforms = transforms.Compose(
     [
         transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
@@ -33,22 +32,21 @@ transforms = transforms.Compose(
     ]
 )
 
-# Load dataset
+
 dataset = datasets.ImageFolder(root="dataset", transform=transforms)
 loader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True)
 
-# Initialize generator and discriminator
 gen = Generator(Z_DIM, CHANNELS_IMG, FEATURES_GEN).to(device)
 disc = Discriminator(CHANNELS_IMG, FEATURES_DISC).to(device)
 initialize_weights(gen)
 initialize_weights(disc)
 
-# Optimizers
+# optimizers
 opt_gen = optim.Adam(gen.parameters(), lr=LEARNING_RATE, betas=(0.0, 0.9))
 opt_disc = optim.Adam(disc.parameters(), lr=LEARNING_RATE, betas=(0.0, 0.9))
 
 
-# Gradient penalty calculation
+# GP calc
 def gradient_penalty(critic, real, fake, device="cpu"):
     batch_size, C, H, W = real.shape
     alpha = torch.rand(batch_size, 1, 1, 1).repeat(1, C, H, W).to(device)
@@ -72,7 +70,6 @@ def gradient_penalty(critic, real, fake, device="cpu"):
     return penalty
 
 
-# Training loop
 gen.train()
 disc.train()
 
