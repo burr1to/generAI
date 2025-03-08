@@ -1,0 +1,1 @@
+GenerAI is a landscape generation AI model built using WGAN with gradient penalty. It aims to be able to generate realistic landscape images through the use of adversarial training between a generator and a discriminator.
